@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+from app.api.routes.story import router as story_router
 from app.api.routes.template import router as template_router
 from app.core.config import settings
 
@@ -21,3 +22,4 @@ def healthcheck() -> dict[str, str]:
 
 
 app.include_router(template_router, prefix=settings.api_v1_prefix)
+app.include_router(story_router)
