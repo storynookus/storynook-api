@@ -25,24 +25,18 @@ steps:
       - ${_REGION}-docker.pkg.dev/${_PROJECT_ID}/${_REPOSITORY}/${_IMAGE_NAME}:$SHORT_SHA
 
   - name: gcr.io/google.com/cloudsdktool/cloud-sdk
-    entrypoint: gcloud
+    entrypoint: bash
     args:
-      - run
-      - deploy
-      - ${_SERVICE_NAME}
-      - --image
-      - ${_REGION}-docker.pkg.dev/${_PROJECT_ID}/${_REPOSITORY}/${_IMAGE_NAME}:$SHORT_SHA
-      - --region
-      - ${_REGION}
-      - --platform
-      - managed
-      - --allow-unauthenticated
-      - --service-account
-      - ${_RUNTIME_SERVICE_ACCOUNT}
-      - --set-env-vars
-      - APP_ENV=${_APP_ENV}
-      - --set-secrets
-      - PROD_API_TOKEN=${_PROD_API_TOKEN_SECRET}:latest
+      - -c
+      - |
+        gcloud run deploy ${_SERVICE_NAME} \
+          --image ${_REGION}-docker.pkg.dev/${_PROJECT_ID}/${_REPOSITORY}/${_IMAGE_NAME}:$SHORT_SHA \
+          --region ${_REGION} \
+          --platform managed \
+          --allow-unauthenticated \
+          --service-account ${_RUNTIME_SERVICE_ACCOUNT} \
+          --set-env-vars APP_ENV=${_APP_ENV} \
+          --set-secrets PROD_API_TOKEN=${_PROD_API_TOKEN_SECRET}:latest
 
 images:
   - ${_REGION}-docker.pkg.dev/${_PROJECT_ID}/${_REPOSITORY}/${_IMAGE_NAME}:$SHORT_SHA
