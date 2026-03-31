@@ -9,6 +9,7 @@ substitutions:
   _IMAGE_NAME: storynook-api
   _APP_ENV: prod
   _PROD_API_TOKEN_SECRET: storynook-prod-api-token
+  _RUNTIME_SERVICE_ACCOUNT: 496014817869-compute@developer.gserviceaccount.com
 
 steps:
   - name: gcr.io/cloud-builders/docker
@@ -36,6 +37,8 @@ steps:
       - --platform
       - managed
       - --allow-unauthenticated
+      - --service-account
+      - ${_RUNTIME_SERVICE_ACCOUNT}
       - --set-env-vars
       - APP_ENV=${_APP_ENV}
       - --set-secrets
