@@ -1,5 +1,5 @@
 options:
-  logging: CLOUD_LOGGING_ONLY
+  logging: LEGACY
 
 substitutions:
   _PROJECT_ID: storynook-491620
