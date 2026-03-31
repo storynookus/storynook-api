@@ -1,5 +1,6 @@
 options:
   logging: LEGACY
+  default_logs_bucket_behavior: REGIONAL_USER_OWNED_BUCKET
 
 substitutions:
   _PROJECT_ID: storynook-491620
@@ -25,18 +26,24 @@ steps:
       - ${_REGION}-docker.pkg.dev/${_PROJECT_ID}/${_REPOSITORY}/${_IMAGE_NAME}:$SHORT_SHA
 
   - name: gcr.io/google.com/cloudsdktool/cloud-sdk
-    entrypoint: bash
+    entrypoint: gcloud
     args:
-      - -c
-      - |
-        gcloud run deploy ${_SERVICE_NAME} \
-          --image ${_REGION}-docker.pkg.dev/${_PROJECT_ID}/${_REPOSITORY}/${_IMAGE_NAME}:$SHORT_SHA \
-          --region ${_REGION} \
-          --platform managed \
-          --allow-unauthenticated \
-          --service-account ${_RUNTIME_SERVICE_ACCOUNT} \
-          --set-env-vars APP_ENV=${_APP_ENV} \
-          --set-secrets PROD_API_TOKEN=${_PROD_API_TOKEN_SECRET}:latest
+      - run
+      - deploy
+      - ${_SERVICE_NAME}
+      - --image
+      - ${_REGION}-docker.pkg.dev/${_PROJECT_ID}/${_REPOSITORY}/${_IMAGE_NAME}:$SHORT_SHA
+      - --region
+      - ${_REGION}
+      - --platform
+      - managed
+      - --allow-unauthenticated
+      - --service-account
+      - ${_RUNTIME_SERVICE_ACCOUNT}
+      - --set-env-vars
+      - APP_ENV=${_APP_ENV}
+      - --set-secrets
+      - PROD_API_TOKEN=storynook-prod-api-token:latest
 
 images:
   - ${_REGION}-docker.pkg.dev/${_PROJECT_ID}/${_REPOSITORY}/${_IMAGE_NAME}:$SHORT_SHA
