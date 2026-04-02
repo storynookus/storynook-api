@@ -4,6 +4,7 @@ from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 
 from app.core.config import Settings
+from app.core.config import Settings
 
 bearer_scheme = HTTPBearer(auto_error=False)
 

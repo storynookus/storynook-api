@@ -12,6 +12,7 @@ import google.auth.transport.requests
 import requests as http_requests
 import vertexai
 from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Depends, status
 from pydantic import BaseModel, Field
 from vertexai.generative_models import GenerativeModel, Part
 from app.api.deps import require_api_token
