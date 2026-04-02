@@ -3,7 +3,7 @@ import hmac
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 
-from app.core.config import settings
+from app.core.config import Settings
 
 bearer_scheme = HTTPBearer(auto_error=False)
 
@@ -23,5 +23,6 @@ def require_api_token(
     if credentials.scheme.lower() != "bearer":
         raise credentials_exception
 
-    if not hmac.compare_digest(credentials.credentials, settings.active_api_token):
+    # Re-load settings at request time so updates in .env are applied immediately.
+    if not hmac.compare_digest(credentials.credentials, Settings().active_api_token):
         raise credentials_exception
