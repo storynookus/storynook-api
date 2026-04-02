@@ -11,9 +11,12 @@ import google.auth
 import google.auth.transport.requests
 import requests as http_requests
 import vertexai
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Depends, status
 from pydantic import BaseModel, Field
 from vertexai.generative_models import GenerativeModel, Part
+from app.api.deps import require_api_token
+router = APIRouter(prefix="/template", tags=["Template"])
 
 router = APIRouter(tags=["Story"])
 
@@ -186,12 +189,18 @@ def _extract_json_object(raw_text: str) -> dict[str, Any]:
     return parsed
 
 
-@router.get("/health")
+@router.get("/health", status_code=status.HTTP_200_OK, dependencies=[Depends(require_api_token)])
 def health() -> dict[str, str]:
     return {"status": "ok", "service": "StoryNook API", "project": GCP_PROJECT}
 
+@router.get("/endpoints", status_code=status.HTTP_200_OK, dependencies=[Depends(require_api_token)])
+def get_endpoints() -> dict[str, str]:
+    return {
+        'generate_story': '/api/v1/story/generate-story',
+        'continue_story': '/api/v1/story/continue-story',
+    }
 
-@router.post("/api/generate-story")
+@router.post("/generate-story", status_code=status.HTTP_200_OK, dependencies=[Depends(require_api_token)])
 def generate_story(payload: GenerateStoryRequest) -> dict[str, Any]:
     try:
         child_name = payload.childName
@@ -295,9 +304,10 @@ Return ONLY the JSON array."""
         return {"success": False, "error": str(exc)}
 
 
-@router.post("/api/continue-story")
+@router.post("/continue-story", status_code=status.HTTP_200_OK, dependencies=[Depends(require_api_token)])
 def continue_story(payload: ContinueStoryRequest) -> dict[str, Any]:
     try:
+        print(f"Received story generation request: {payload}", flush=True)
         current_page = payload.currentPage
         current_text = payload.currentText
         kid_input = payload.kidInput
