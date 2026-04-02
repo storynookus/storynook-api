@@ -203,7 +203,6 @@ def get_endpoints() -> dict[str, str]:
 @router.post("/generate-story", status_code=status.HTTP_200_OK, dependencies=[Depends(require_api_token)])
 def generate_story(payload: GenerateStoryRequest) -> dict[str, Any]:
     try:
-        print(f"Received story generation request: {payload}", flush=True)
         child_name = payload.childName
         child_age = payload.childAge
         interests = payload.interests
