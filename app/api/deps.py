@@ -23,6 +23,5 @@ def require_api_token(
     if credentials.scheme.lower() != "bearer":
         raise credentials_exception
 
-    # Re-load settings at request time so updates in .env are applied immediately.
     if not hmac.compare_digest(credentials.credentials, Settings().active_api_token):
         raise credentials_exception
